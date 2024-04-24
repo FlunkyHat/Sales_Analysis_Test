@@ -57,6 +57,9 @@ def advisor_summary(advisor):
 
 @app.route('/monthly_summary_data')
 def monthly_summary_data():
+    # Calculate the total sales value for each month
+    monthly_summary = df.groupby('Month')['Value of sale'].agg(['count', 'sum', 'mean', 'median', 'min', 'max']).reset_index()
+
     # Convert the data to JSON format
     data = {
         'months': monthly_summary['Month'].tolist(),
@@ -72,14 +75,17 @@ def monthly_summary_data():
 
 @app.route('/advisor_summary_data')
 def advisor_summary_data():
+    # Calculate the total sales value for each advisor for each month
+    advisor_summary = df.groupby(['Advisor Name', 'Month'])['Value of sale'].agg(['count', 'sum', 'mean', 'median', 'min', 'max']).reset_index()
+
     # Convert the data to JSON format
     data = {
-        'months': summary['Month'].unique().tolist(),
+        'months': advisor_summary['Month'].unique().tolist(),
         'advisors': []
     }
 
-    for advisor in summary['Advisor Name'].unique():
-        advisor_data = summary[summary['Advisor Name'] == advisor]
+    for advisor in advisor_summary['Advisor Name'].unique():
+        advisor_data = advisor_summary[advisor_summary['Advisor Name'] == advisor]
         data['advisors'].append({
             'name': advisor,
             'total_sales_values': advisor_data['sum'].tolist(),

@@ -53,11 +53,11 @@ fetch('/advisor_summary_data')
             type: 'line',
             data: {
                 labels: data.months,
-                datasets: data.advisors.map(advisor => ({
+                datasets: data.advisors.map((advisor, index) => ({
                     label: advisor.name,
                     data: advisor.total_sales_values,
                     fill: false,
-                    borderColor: advisor.color,
+                    borderColor: `hsl(${(index * (360 / data.advisors.length))}, 50%, 50%)`,
                     lineTension: 0.1
                 }))
             },
